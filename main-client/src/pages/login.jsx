@@ -74,7 +74,7 @@ function Login(props) {
               handleLocalStorage.set('access_token', res.data.token);
             }
             handleSessionStorage.set('access_token', res.data.token);
-            toast.success(res.data.message);
+            toast.success('Đăng nhập thành công');
             dispatch(userSlice.actions.setIsLoading(false))
             
             if (searchParams.get('redirect')) {
@@ -117,18 +117,18 @@ function Login(props) {
             style={{ maxWidth: 600, marginLeft: "auto", marginRight: "auto" }}
           >
             <Form.Item
-              label="Username"
+              label="Tên đăng nhập"
               name="username"
               rules={[{ required: true }]}
             >
-              <Input placeholder="Username" />
+              <Input placeholder="Tên đăng nhập" />
             </Form.Item>
             <Form.Item
-              label="Password"
+              label="Mật khẩu"
               name="password"
               rules={[{ required: true, min: 6 }]}
             >
-              <Input.Password placeholder="Password" />
+              <Input.Password placeholder="Mật khẩu" />
             </Form.Item>
 
             <Form.Item
@@ -143,7 +143,7 @@ function Login(props) {
                 valuePropName="checked"
                 style={{ display: "inline-block", width: "calc(50% - 8px)" }}
               >
-                <Checkbox>Remember me</Checkbox>
+                <Checkbox>Nhớ tài khoản</Checkbox>
               </Form.Item>
               <Link
                 style={{
@@ -153,7 +153,7 @@ function Login(props) {
                   margin: "0px 0px 0px 8px",
                 }}
               >
-                Forgot Password?
+                Quên mật khẩu?
               </Link>
             </Form.Item>
 
@@ -161,9 +161,9 @@ function Login(props) {
               <Space>
                 <Button type="primary" htmlType="submit">
                   {isLoading && <Loading color="#fff" bgColor="#1677ff" />}
-                  Login
+                  Đăng nhập
                 </Button>
-                <Text type="secondary">Don't have an account yet?</Text>
+                <Text type="secondary">Chưa có tài khoản?</Text>
               </Space>
               <Button
                 type="link"
@@ -171,7 +171,7 @@ function Login(props) {
                 onClick={() => handleRegiterClick()}
               >
                 <Text underline italic>
-                  Register
+                  Đăng ký
                 </Text>
               </Button>
             </Form.Item>

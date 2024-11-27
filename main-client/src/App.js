@@ -9,6 +9,7 @@ import checkAuth from "./utils/checkAuth";
 import { userSlice } from "./redux/userSlice";
 import { authApi } from "./api/authApi";
 import { toast } from "react-toastify";
+import { ConfigProvider, theme } from 'antd';
 
 function App() {
   const dispatch = useDispatch();
@@ -56,11 +57,22 @@ function App() {
 
   //auto go to top when search
   return (
+    <ConfigProvider
+        theme={{
+            token: {
+                colorPrimary: '#9ABF80',
+                colorPrimaryText: '#31511E',
+                colorText: '#31511E', // Change primary color
+                
+            },
+        }}
+    >
     <Router>
       <div>
         <Routers />
       </div>
     </Router>
+    </ConfigProvider>
   );
 }
 

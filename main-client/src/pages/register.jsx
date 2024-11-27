@@ -42,7 +42,7 @@ function Register(props) {
               //reset form
               return;
             }
-            toast.success(res.data.message);
+            toast.success('Đăng ký thành công');
             dispatch(userSlice.actions.setIsLoading(false))
             navigate('/login');
           }
@@ -75,13 +75,13 @@ function Register(props) {
             style={{ maxWidth: 600 }}
           >
 
-            <Form.Item label="Full Name" style={{ marginBottom: 0 }} required>
+            <Form.Item label="Họ và tên" style={{ marginBottom: 0 }} required>
               <Form.Item
                 name="firstname"
                 rules={[{ required: true }]}
                 style={{ display: "inline-block", width: "calc(50% - 8px)" }}
               >
-                <Input placeholder="First Name" />
+                <Input placeholder="Tên" />
               </Form.Item>
               <Form.Item
                 name="lastname"
@@ -92,7 +92,7 @@ function Register(props) {
                   margin: "0px 0px 0px 12px",
                 }}
               >
-                <Input placeholder="Last Name" />
+                <Input placeholder="Họ" />
               </Form.Item>
             </Form.Item>
 
@@ -110,27 +110,27 @@ function Register(props) {
               <Input placeholder="Email"/>
             </Form.Item>
             <Form.Item
-              label="Username"
+              label="Tên đăng nhập"
               name="username"
               rules={[{ required: true }]}
             >
-              <Input placeholder="Username"/>
+              <Input placeholder="Tên đăng nhập"/>
             </Form.Item>
             <Form.Item
-              label="Password"
+              label="Mật khẩu"
               name="password"
               rules={[{ required: true, min: 6 }]}
             >
-              <Input.Password placeholder="Password" />
+              <Input.Password placeholder="Mật khẩu" />
             </Form.Item>
 
             <Form.Item {...tailLayout}>
               <Space>
                 <Button type="primary" htmlType="submit">
                  {isLoading && <Loading color="#fff" bgColor="#1677ff" />}
-                  Register
+                  Đăng ký
                 </Button>
-                <Text type="secondary">Have an account?</Text>
+                <Text type="secondary">Đã có tài khoản?</Text>
               </Space>
               <Button
                 type="link"
@@ -138,7 +138,7 @@ function Register(props) {
                 onClick={() => handleSignInClick()}
               >
                 <Text underline italic>
-                  Log In
+                  Đăng nhập
                 </Text>
               </Button>
             </Form.Item>

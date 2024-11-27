@@ -101,8 +101,8 @@ function UserInfo(props) {
     if(!editValue) {
       messageApi.open({
         type: 'error',
-        content: 'Please enter value!',
-        duration: 2,
+        content: 'Vui lòng nhập giá trị hợp lệ!',
+        duration: 1,
       });
       return;
     }
@@ -110,8 +110,8 @@ function UserInfo(props) {
     if(editElement === "email" && !validateEmail(editValue)) {
       messageApi.open({
         type: 'error',
-        content: 'Please enter valid email!',
-        duration: 2,
+        content: 'Vui lòng nhập email hợp lệ!',
+        duration: 1,
       });
       return;
     }
@@ -157,8 +157,8 @@ function UserInfo(props) {
   }
 
   return (
-    <div className="form-container">
-      <div className="sub-info-container">
+    <div style={{margin: '20px 0px 0px 0px'}}>
+      <div>
         {contextHolder} {/* message validate form */}
         <Card>
           <Card.Meta
@@ -166,7 +166,7 @@ function UserInfo(props) {
               <Avatar src="https://www.366icons.com/media/01/profile-avatar-account-icon-16699.png" />
             }
             title={currentUser.username || "test-username"}
-            description={`Role: ${capitalizeFirstLetter(currentUser.role)}`}
+            description={`Vai trò: ${capitalizeFirstLetter(currentUser.role)}`}
           />
           <List>
             <List.Item
@@ -174,22 +174,22 @@ function UserInfo(props) {
                 editElement === "firstname"
                   ? [
                       <a key="list-loadmore-edit" onClick={handleCancelEdit}>
-                        Cancel
+                        Hủy
                       </a>,
                       <a key="list-loadmore-edit" onClick={handleUpdate}>
-                        Update
+                        Cập nhật
                       </a>,
                     ]
                   : [
                       <a key="list-loadmore-edit" onClick={handleEditFirstname}>
-                        Edit
+                        Thay đổi
                       </a>,
                     ]
               }
             >
               {editElement === "firstname" ? (
                 <Input
-                  placeholder="Enter value"
+                  placeholder="Nhập..."
                   name="title"
                   value={editValue}
                   onChange={(event) => handEditFormChange(event)}
@@ -198,7 +198,7 @@ function UserInfo(props) {
                 />
               ) : (
                 <Typography.Text>
-                  <i>First Name:</i> {currentUser.firstname}
+                  <i>Tên:</i> {currentUser.firstname}
                 </Typography.Text>
               )}
             </List.Item>
@@ -208,22 +208,22 @@ function UserInfo(props) {
                 editElement === "lastname"
                   ? [
                       <a key="list-loadmore-edit" onClick={handleCancelEdit}>
-                        Cancel
+                        Hủy
                       </a>,
                       <a key="list-loadmore-edit" onClick={handleUpdate}>
-                        Update
+                        Cập nhật
                       </a>,
                     ]
                   : [
                       <a key="list-loadmore-edit" onClick={handleEditLastName}>
-                        Edit
+                        Thay đổi
                       </a>,
                     ]
               }
             >
               {editElement === "lastname" ? (
                 <Input
-                  placeholder="Enter value"
+                  placeholder="Nhập..."
                   name="title"
                   value={editValue}
                   onChange={(event) => handEditFormChange(event)}
@@ -232,7 +232,7 @@ function UserInfo(props) {
                 />
               ) : (
                 <Typography.Text>
-                  <i>Last Name:</i> {currentUser.lastname}
+                  <i>Họ:</i> {currentUser.lastname}
                 </Typography.Text>
               )}
             </List.Item>
@@ -242,22 +242,22 @@ function UserInfo(props) {
                 editElement === "email"
                   ? [
                       <a key="list-loadmore-edit" onClick={handleCancelEdit}>
-                        Cancel
+                        Hủy
                       </a>,
                       <a key="list-loadmore-edit" onClick={handleUpdate}>
-                        Update
+                        Cập nhật
                       </a>,
                     ]
                   : [
                       <a key="list-loadmore-edit" onClick={handleEditEmail}>
-                        Edit
+                        Thay đổi
                       </a>,
                     ]
               }
             >
               {editElement === "email" ? (
                 <Input
-                  placeholder="Enter value"
+                  placeholder="Nhập..."
                   name="title"
                   value={editValue}
                   onChange={(event) => handEditFormChange(event)}
@@ -273,15 +273,16 @@ function UserInfo(props) {
           </List>
           <Flex gap="small" justify="center" style={{ marginTop: "16px" }}>
             <Button type="primary" icon={<EditOutlined />} onClick={showModal}>
-              Change Password
+              Đổi mật khẩu
             </Button>
             <Modal
               centered
-              title="Change Password"
+              title="Đổi mật khẩu"
               open={isModalChangePasswordOpen}
               onOk={()=>changePasswordForm.submit()}
               onCancel={handleCancelChangePassword}
-              okText="Change"
+              okText="Thay đổi"
+              cancelText="Hủy"
             >
               <Form
                 form={changePasswordForm}
@@ -294,7 +295,7 @@ function UserInfo(props) {
                 autoComplete="off"
               >
                 <Form.Item
-                  label="Current Password"
+                  label="Mật khẩu hiện tại"
                   name="password"
                   rules={[
                     { required: true, min: 6, message: "Please input valid current password!" },
@@ -303,7 +304,7 @@ function UserInfo(props) {
                   <Input.Password />
                 </Form.Item>
                 <Form.Item
-                  label="New password"
+                  label="Mật khẩu mới"
                   name="newPassword"
                   rules={[
                     { required: true, min: 6, message: "Please input valid current password!" },
@@ -312,7 +313,7 @@ function UserInfo(props) {
                   <Input.Password />
                 </Form.Item>
                 <Form.Item
-                  label="Confirm Password"
+                  label="Xác nhận mật khẩu"
                   name="confirmPassword"
                   rules={[
                     { required: true, min: 6, message: "Please input valid current password!" },
@@ -324,8 +325,8 @@ function UserInfo(props) {
             </Modal>
             {/* delete account */}
             <Popconfirm
-              title="Delete account"
-              description="Are you sure to delete this account?"
+              title="Xóa tài khoản"
+              description="Bạn có chắc chắn muốn xóa tài khoản?"
               icon={<QuestionCircleOutlined style={{ color: "red" }} />}
               okButtonProps={{ danger: true }}
               onConfirm={onConfirmDeleteAccount}
@@ -334,7 +335,7 @@ function UserInfo(props) {
               cancelText="Cancel"
             >
               <Button type="primary" icon={<DeleteOutlined />} danger>
-                Delete Account
+                Xóa tài khoản
               </Button>
             </Popconfirm>
           </Flex>

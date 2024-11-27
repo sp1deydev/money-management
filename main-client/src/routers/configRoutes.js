@@ -23,22 +23,24 @@ export const configRoutes = [
     {
         path: '/login',
         component: Login,
+        layout: NO_LAYOUT,
     },
     {
         path: '/register',
         component: Register,
+        layout: NO_LAYOUT,
     },
     {
         path: '/cart',
         component: Cart,
         protected: true,
-        rolePermissions: ['user', 'admin'],
+        rolePermissions: ['user'],
     },
     {
         path: '/userInfo/:userId',
         component: UserInfo,
         protected: true,
-        rolePermissions: ['admin', 'user'],
+        rolePermissions: ['user'],
     },
     
 ]
