@@ -61,7 +61,7 @@ function Income() {
         return number ? parseInt(number, 10) : 0;
     };
 
-    const formaInputCurrency = (value) => {
+    const formatInputCurrency = (value) => {
         if (!value) return '';
         if (typeof value !== 'number') {
             value = parseInt(value.replace(/[^0-9]/g, ''), 10);
@@ -86,7 +86,7 @@ function Income() {
         setCurrentIncome(income);
         form.setFieldsValue({
             type: income.type,
-            value: formaInputCurrency(income.value),
+            value: formatInputCurrency(income.value),
             date: moment(income.date),
         });
     };
@@ -215,7 +215,7 @@ function Income() {
                         type="text"
                         addonAfter="VND"
                         onChange={(e) =>
-                            form.setFieldsValue({ value: formaInputCurrency(e.target.value) })
+                            form.setFieldsValue({ value: formatInputCurrency(e.target.value) })
                         }
                     />
                 </Form.Item>
@@ -240,7 +240,7 @@ function Income() {
     return (
         <div>
             <Title level={4} style={{ color: '#444' }}>
-                Các nguồn thu nhập
+               Quản lý thu nhập
             </Title>
 
             <Row gutter={[12, 12]}>

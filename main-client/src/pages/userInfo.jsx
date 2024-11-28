@@ -130,6 +130,7 @@ function UserInfo(props) {
         username: user.username,
         firstname: user.firstname,
         lastname: user.lastname,
+        role: user.role,
         email: user.email,
         createdAt: user.createdAt,
       };
