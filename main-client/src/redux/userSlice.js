@@ -4,6 +4,7 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         isLoading: true,
+        forgotFactor: '',
         currentUser: {},
     },
     reducers: {
@@ -18,6 +19,9 @@ export const userSlice = createSlice({
         },
         editUser: (state, action) => {
             state.currentUser = action.payload
+        },
+        setForgotFactor: (state, action) => {
+            state.forgotFactor = action.payload
         },
     },
 })

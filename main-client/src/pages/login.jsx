@@ -11,6 +11,7 @@ import handleAuthToken from '../utils/handleAuthToken';
 import { handleSessionStorage } from '../utils/handleSessionStorage';
 import Loading from '../components/loading';
 import logo from '../assets/emoney.png'
+import OTP from '../components/OTP/otp';
 
 Login.propTypes = {
     
@@ -166,6 +167,7 @@ function Login(props) {
                   lineHeight: "32px",
                   margin: "0px 0px 0px 8px",
                 }}
+                onClick={() => dispatch(userSlice.actions.setForgotFactor('password'))}
               >
                 Quên mật khẩu?
               </Link>
@@ -191,6 +193,7 @@ function Login(props) {
             </Form.Item>
           </Form>
         </div>
+        <OTP/>
       </div>
     );
 }

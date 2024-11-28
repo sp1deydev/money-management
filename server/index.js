@@ -47,6 +47,7 @@ app.use(bodyParser.json());
 const productsRoute = require('./app/routers/product');
 const authRoute = require('./app/routers/auth');
 const userRoute = require('./app/routers/user'); 
+const otpRoute = require('./app/routers/otp'); 
 
 
 
@@ -54,7 +55,7 @@ const userRoute = require('./app/routers/user');
 app.use('/products', productsRoute);
 app.use('/auth', authRoute);
 app.use('/users', userRoute);
-
+app.use('/otp', otpRoute);
 
 
 app.listen(PORT);
