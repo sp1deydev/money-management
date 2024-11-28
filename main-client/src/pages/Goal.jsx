@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-Cart.propTypes = {
+Goal.propTypes = {
     
 };
 
-function Cart(props) {
+function Goal(props) {
     return (
         <div>
-            Cart Page
+            Goal Page
         </div>
     );
 }
 
-export default Cart;
+export default Goal;

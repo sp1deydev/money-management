@@ -2,9 +2,9 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Routes } from 'react-router-dom';
 import { configRoutes } from './configRoutes';
-import ProtectedRoute from './ProtecteRoute';
+import ProtectedRoute from './ProtectedRoute';
 import { NO_LAYOUT } from '../constants/layout';
-import MainLayout from '../layouts/MainLayout';
+import MainLayout from '../layouts/mainLayout';
 
 Routers.propTypes = {
     

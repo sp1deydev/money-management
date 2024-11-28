@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-About.propTypes = {
+Expense.propTypes = {
     
 };
 
-function About(props) {
+function Expense(props) {
     return (
         <div>
-            About Page
+            Expense Page
         </div>
     );
 }
 
-export default About;
+export default Expense;
