@@ -56,16 +56,16 @@ const MainLayout = (props) => {
           />
         </div>
         <Menu theme="light" defaultSelectedKeys={['1']} mode="inline">
-          <Menu.Item key="1" icon={<PieChartOutlined />} onClick={() => navigate('/admin/dashboard')}>
-            Trang tổng quan
+          <Menu.Item key="1" icon={<PieChartOutlined />} onClick={() => navigate('/dashboard')}>
+            Báo cáo tổng quan
           </Menu.Item>
-          <Menu.Item key="10" icon={<ShoppingOutlined />} onClick={() => navigate('/admin/purchase-order')}>
+          <Menu.Item key="10" icon={<ShoppingOutlined />} onClick={() => navigate('/income')}>
             Quản lý thu nhập
           </Menu.Item>
-          <Menu.Item key="2" icon={<ShopOutlined />} onClick={() => navigate('/admin/products')}>
+          <Menu.Item key="2" icon={<ShopOutlined />} onClick={() => navigate('/outcome')}>
             Quản lý chi tiêu
           </Menu.Item>
-          <Menu.Item key="9" icon={<TagsOutlined  />} onClick={() => navigate('/admin/categories')}>
+          <Menu.Item key="9" icon={<TagsOutlined  />} onClick={() => navigate('/goal')}>
             Mục tiêu tài chính
           </Menu.Item>
           <Menu.Item key="5" icon={<InfoCircleOutlined />}  onClick={() => navigate(`/userInfo/${currentUser.id}`)}>
@@ -78,7 +78,7 @@ const MainLayout = (props) => {
       </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={{ backgroundColor:'#fff',padding: 0 }} />
-        <Content style={{ margin: '0 24px' }}>
+        <Content style={{ padding: '0 24px', backgroundColor:'#E8F5E9 ' }}>
           {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             <Breadcrumb.Item>Overview</Breadcrumb.Item>
@@ -88,7 +88,7 @@ const MainLayout = (props) => {
             {props.children}
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>E-Money 2024</Footer>
+        <Footer style={{ textAlign: 'center', backgroundColor:'#E8F5E9 ' }}>E-Money 2024</Footer>
       </Layout>
     </Layout>
   );

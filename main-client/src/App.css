@@ -53,3 +53,22 @@
   margin-right: auto;
   width: 672px;
 }
+.dashboard-container {
+  background-color: #e7f5dc;
+  border-radius: 16px;
+  padding: 28px
+}
+.statistic-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.number_total {
+  color: #000;
+  font-weight: 600;
+  font-size: 24px;
+}
+.title_total {
+  font-weight: 500;
+  font-size: 16px;
+}
