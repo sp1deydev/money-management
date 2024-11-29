@@ -289,6 +289,7 @@ function Income() {
                 dataSource={addMonthColumn(incomeRecords)} // Add "month" column dynamically
                 rowKey="id"
                 style={{ marginTop: 20 }}
+                pagination={{pageSize: 4, total: incomeRecords.length}}
             />
 
             {renderIncomeModal()}

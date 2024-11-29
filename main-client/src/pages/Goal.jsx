@@ -208,6 +208,7 @@ const Goal = () => {
               dataSource={goals}
               columns={columns}
               bordered
+              pagination={{pageSize: 7, total: goals.length}}
             />
           </Col>
         </Row>

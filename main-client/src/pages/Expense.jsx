@@ -264,6 +264,7 @@ function Expenses() {
                 }))}
                 rowKey="id"
                 style={{ marginTop: 20 }}
+                pagination={{pageSize: 4, total: expenseRecords.length}}
             />
 
             {renderExpenseModal()}
