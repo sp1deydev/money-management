@@ -215,7 +215,7 @@ const OTP = (props) => {
           initialValues={{ username: '' }}
           style={{marginTop:'-30px'}}
         >
-            <Typography.Title level={5}>Input Your Email</Typography.Title>
+            <Typography.Title level={5}>Nhập email của bạn</Typography.Title>
           <Form.Item
             // label="Username"
             name="email"
@@ -224,13 +224,13 @@ const OTP = (props) => {
               { type: 'email', message: 'Please enter a valid email!' }
             ]}
           >
-            <Input placeholder="Enter your email"/>
+            <Input placeholder="example@test.eg"/>
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ width: '100%' }} disabled={isLoading}>
              {isLoading && <Loading color="#fff" bgColor="#1677ff" size="50"/>}
-              Send OTP
+              Gửi OTP
             </Button>
           </Form.Item>
         </Form>
@@ -238,9 +238,9 @@ const OTP = (props) => {
   const otpElement = (
     <Flex gap="middle" align="flex-start" vertical>
       <Flex gap="middle" align="flex-start">
-        <Typography.Title level={5} style={{marginTop:'-1px'}}>OTP Verification</Typography.Title>
+        <Typography.Title level={5} style={{marginTop:'-1px'}}>Xác thực OTP</Typography.Title>
         <Typography.Text type={countdown === 0 ? "danger" : "secondary"}>
-          {countdown > 0 ? `Expires in ${countdown}s` : "OTP expired"}
+          {countdown > 0 ? `OTP hết hạn trong ${countdown}s` : "OTP hết hạn"}
         </Typography.Text>
       </Flex>
 
@@ -263,17 +263,17 @@ const OTP = (props) => {
         <Form.Item>
           <Flex gap="middle" align="flex-start">
             <Button type="primary" htmlType="submit" disabled={countdown === 0 || isLoading}>
-              Submit OTP
+              Xác thực OTP
             </Button>
             <Button
               type="link"
               onClick={resetCountdown}
               disabled={countdown > 0 || isLoading}
             >
-              Resend OTP
+              Gửi lại OTP
             </Button>
             <Button type="link" onClick={resetEmail} disabled={isLoading}>
-              Another email?
+              Email khác?
             </Button>
           </Flex>
         </Form.Item>
@@ -289,7 +289,7 @@ const OTP = (props) => {
     initialValues={{ username: '' }}
     style={{marginTop:'-30px'}}
     >
-      <Typography.Title level={5}>Input Your Username</Typography.Title>
+      <Typography.Title level={5}>Nhập tên đăng nhập của bạn</Typography.Title>
     <Form.Item
       // label="Username"
       name="username"
@@ -297,13 +297,13 @@ const OTP = (props) => {
         { required: true, message: 'Please input your username!' },
       ]}
     >
-      <Input placeholder="Enter your username"/>
+      <Input placeholder="username"/>
     </Form.Item>
 
     <Form.Item>
       <Button type="primary" htmlType="submit" style={{ width: '100%' }} disabled={isLoading}>
        {isLoading && <Loading color="#fff" bgColor="#1677ff" size="50"/>}
-        Confirm
+        Xác nhận
       </Button>
     </Form.Item>
   </Form>
