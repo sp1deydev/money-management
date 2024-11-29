@@ -14,6 +14,7 @@ router.post('/check-username', userController.checkUsername);
 router.post('/forgot-password', userController.forgotPassword);
 router.put('/update', checkLogin, userController.updateUser);
 router.delete('/delete', checkLogin, userController.deleteUser);
+router.post('/delete-by-admin', checkLogin, isAdmin, userController.deleteUserByAdmin);
 router.get('/:id', checkLogin, userController.getUserById);
 
 module.exports = router;

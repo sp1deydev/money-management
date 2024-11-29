@@ -34,7 +34,7 @@ const authController = {
                     const user = new User(newUser);
                     user.save() 
                         .then(result => {
-                            res.status(200).json({success: true, message: 'User saved successfully'})
+                            res.status(200).json({success: true, data: result, message: 'User saved successfully'})
                         })
                         .catch(err => {
                             console.log(err)

@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
-import { Layout, Menu, Breadcrumb, Card, Row, Col } from 'antd';
-import logo from '../assets/emoney.png'
 import {
-  PieChartOutlined,
-  ShopOutlined,
-  UserOutlined,
-  TagsOutlined ,
-  ShoppingOutlined,
+  InfoCircleOutlined,
   LogoutOutlined,
-  InfoCircleOutlined
+  UserOutlined
 } from '@ant-design/icons';
+import { Layout, Menu, Popconfirm } from 'antd';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import logo from '../assets/emoney.png';
+import { userSlice } from '../redux/userSlice';
+import handleAuthToken from '../utils/handleAuthToken';
 import { handleLocalStorage } from '../utils/handleLocalStorage';
 import { handleSessionStorage } from '../utils/handleSessionStorage';
-import handleAuthToken from '../utils/handleAuthToken';
-import { userSlice } from '../redux/userSlice';
-import { toast } from 'react-toastify';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -56,14 +52,23 @@ const MainLayout = (props) => {
           />
         </div>
         <Menu theme="light" defaultSelectedKeys={['1']} mode="inline">
-          <Menu.Item key="1" icon={<UserOutlined />} onClick={() => navigate('/dashboard')}>
+          <Menu.Item key="1" icon={<UserOutlined />} onClick={() => navigate('/users')}>
             Quản lý người dùng
           </Menu.Item>
           <Menu.Item key="5" icon={<InfoCircleOutlined />}  onClick={() => navigate(`/userInfo/${currentUser.id}`)}>
             Hồ sơ người dùng
           </Menu.Item>
-          <Menu.Item key="11" icon={<LogoutOutlined />} danger onClick={handleLogout}>
-            Đăng xuất
+          <Menu.Item key="11" icon={<LogoutOutlined />} danger>
+            <Popconfirm
+              title="Bạn có chắc chắn muốn đăng xuất?"
+              onConfirm={handleLogout}
+              okText="Đăng xuất"
+              cancelText="Hủy"
+            >
+              <div style={{width:'100%'}}>
+                Đăng xuất
+              </div>
+            </Popconfirm>
           </Menu.Item>
         </Menu>
       </Sider>

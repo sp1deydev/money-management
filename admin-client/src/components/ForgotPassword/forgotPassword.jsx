@@ -51,7 +51,7 @@ const ForgotPassword = (props) => {
           autoComplete="off"
           style={{marginTop:'-30px'}}
         >
-            <Typography.Title level={5}>Config New Password</Typography.Title>
+            <Typography.Title level={5}>Đặt lại mật khẩu</Typography.Title>
           <Form.Item
             // label="New password"
             name="newPassword"
@@ -59,7 +59,7 @@ const ForgotPassword = (props) => {
               { required: true, min: 6, message: "Please input valid new password!" },
             ]}
           >
-            <Input.Password placeholder='Input new password'/>
+            <Input.Password placeholder='Nhập mật khẩu mới'/>
           </Form.Item>
           <Form.Item
             // label="Confirm Password"
@@ -68,12 +68,12 @@ const ForgotPassword = (props) => {
               { required: true, min: 6, message: "Please input valid confirm password!" },
             ]}
           >
-            <Input.Password placeholder='Input confirm password'/>
+            <Input.Password placeholder='Xác nhận mật khẩu'/>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ width: '100%' }} >
              {/* {isLoading && <Loading color="#fff" bgColor="#1677ff" size="50"/>} */}
-              Set New Password
+              Đặt lại mật khẩu
             </Button>
           </Form.Item>
         </Form>

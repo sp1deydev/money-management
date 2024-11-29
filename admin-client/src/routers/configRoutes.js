@@ -1,21 +1,21 @@
 import { NO_LAYOUT } from "../constants/layout";
-import Dashboard from "../pages/Dashboard";
 import Login from "../pages/login";
 import Register from "../pages/register";
 import UserInfo from "../pages/userInfo";
+import Users from "../pages/Users";
 
 export const configRoutes = [
     {
         path: '/',
-        component: Dashboard,
+        component: Users,
         protected: true,
-        rolePermissions: ['user'],
+        rolePermissions: ['admin'],
     },
     {
-        path: '/dashboard',
-        component: Dashboard,
+        path: '/users',
+        component: Users,
         protected: true,
-        rolePermissions: ['user'],
+        rolePermissions: ['admin'],
     },
     {
         path: '/login',
@@ -23,15 +23,10 @@ export const configRoutes = [
         layout: NO_LAYOUT,
     },
     {
-        path: '/register',
-        component: Register,
-        layout: NO_LAYOUT,
-    },
-    {
         path: '/userInfo/:userId',
         component: UserInfo,
         protected: true,
-        rolePermissions: ['user'],
+        rolePermissions: ['admin'],
     },
     
 ]

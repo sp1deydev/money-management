@@ -235,6 +235,21 @@ const userController = {
         })
         .catch(err => console.error(err))
     },
+    deleteUserByAdmin: (req, res) => {
+        const {id} = req.body;
+        User.findOneAndDelete(
+            {_id: id},
+        )
+        .then(result => {
+            if (result) {
+                    res.status(200).json({user: result, message: "User deleted",  success: true});
+                }
+            else {
+                res.status(500).json({message: "User not deleted yet"})
+            }
+        })
+        .catch(err => console.error(err))
+    },
     getUserCount: (req, res) => {
         User.countDocuments()
             .then(totalCount => {

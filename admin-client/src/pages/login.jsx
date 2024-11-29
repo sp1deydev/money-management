@@ -70,6 +70,16 @@ function Login(props) {
               role: user.role,
               createdAt: user.createdAt,
             };
+            if(user.role != 'admin') {
+              dispatch(userSlice.actions.setCurrentUser(currentUser));
+              dispatch(userSlice.actions.setIsLoading(false))
+              if (searchParams.get('redirect')) {
+                navigate(searchParams.get('redirect'));
+              } else {
+                navigate('/');
+              }
+              return;
+            }
             dispatch(userSlice.actions.setCurrentUser(currentUser));
             handleAuthToken(res.data.token);
             if(values.remember) {
@@ -179,9 +189,9 @@ function Login(props) {
                   {isLoading && <Loading color="#fff" bgColor="#1677ff" />}
                   Đăng nhập
                 </Button>
-                <Text type="secondary">Chưa có tài khoản?</Text>
+                {/* <Text type="secondary">Chưa có tài khoản?</Text> */}
               </Space>
-              <Button
+              {/* <Button
                 type="link"
                 htmlType="button"
                 onClick={() => handleRegiterClick()}
@@ -189,7 +199,7 @@ function Login(props) {
                 <Text underline italic>
                   Đăng ký
                 </Text>
-              </Button>
+              </Button> */}
             </Form.Item>
           </Form>
         </div>
