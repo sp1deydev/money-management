@@ -70,6 +70,16 @@ function Login(props) {
               role: user.role,
               createdAt: user.createdAt,
             };
+            if(user.role != 'user') {
+              dispatch(userSlice.actions.setCurrentUser(currentUser));
+              dispatch(userSlice.actions.setIsLoading(false))
+              if (searchParams.get('redirect')) {
+                navigate(searchParams.get('redirect'));
+              } else {
+                navigate('/');
+              }
+              return;
+            }
             dispatch(userSlice.actions.setCurrentUser(currentUser));
             handleAuthToken(res.data.token);
             if(values.remember) {

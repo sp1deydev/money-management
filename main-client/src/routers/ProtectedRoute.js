@@ -22,7 +22,7 @@ function ProtectedRoute(props) {
         //authorization 
         if (Object.keys(currentUser).length !== 0 && !isLoading && !isRolePermissions) {
             toast.error("Bạn không có quyền truy cập trang này");
-            navigate("/");
+            navigate("/login");
         }
     }, [currentUser, navigate, isLoading]);
     return <Fragment>{currentUser && props.children}</Fragment>;
