@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Layout,
   Form,
@@ -17,39 +17,91 @@ import {
 } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { toast } from 'react-toastify';
+import { goalApi } from '../api/goalApi';
 
+const pageSize = 7
 const { Title } = Typography;
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const Goal = () => {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
   const [goals, setGoals] = useState([]);
+  const [totalGoals, setTotalGoals] = useState();
+  const [currentPage, setCurrentPage] = useState();
   const [editingGoal, setEditingGoal] = useState(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   const calculateProgress = (currentAmount, targetAmount) => {
     return Math.min((currentAmount / targetAmount) * 100, 100).toFixed(2);
   };
+  
+  //load goals list 
+  const onLoadData = async () => {
+    try {
+      const payload = {
+        limit: pageSize,
+        page: currentPage,
+        order: 'desc'
+      }
+      const response = await goalApi.getAllGoals(payload)
+      let goals = [...response.data.data]
+      goals.forEach(goal => {
+        goal.progress = calculateProgress(goal.currentAmount, goal.targetAmount)
+      })
+      setGoals(goals);
+      setTotalGoals(response.data.meta.totalCount)
+    }
+    catch (err) {
+      toast.error(err);
+    }
+  };
+  useEffect(() => {
+    onLoadData();
+  }, [currentPage])
 
-  const handleAddGoal = (values) => {
+  const handleTableChange = (pagination, filters, sorter) => {
+    setCurrentPage(pagination.current);
+  }
+
+  const handleAddGoal = async (values) => {
     const newGoal = {
-      key: goals.length + 1,
       name: values.name,
       targetAmount: values.targetAmount,
       currentAmount: values.currentAmount,
       deadline: values.deadline.format('YYYY-MM-DD'),
     };
-    newGoal.progress = calculateProgress(newGoal.currentAmount, newGoal.targetAmount);
-
-    setGoals([...goals, newGoal]);
-    message.success('Mục tiêu đã được thêm!');
+    try {
+      const response = await goalApi.createGoal(newGoal);
+      if(!response.data.success) {
+        toast.error("Xảy ra lỗi khi thêm mục tiêu tài chính!");
+        return;
+      }
+      setCurrentPage(1)
+      onLoadData();
+      toast.success('Mục tiêu tài chính đã được thêm!');
+    }
+    catch (err) {
+      toast.error(err.response.statusText);
+    }
     form.resetFields();
   };
 
-  const handleDeleteGoal = (key) => {
-    setGoals(goals.filter((goal) => goal.key !== key));
-    message.success('Mục tiêu đã được xóa!');
+  const handleDeleteGoal = async (id) => {
+    try {
+      const response = await goalApi.deleteGoal({id});
+      if(!response.data.success) {
+        toast.error("Xảy ra lỗi khi xóa mục tiêu tài chính!");
+        return;
+      }
+      setCurrentPage(1);
+      onLoadData();
+      toast.success('Mục tiêu tài chính đã được xóa!');
+    }
+    catch (err) {
+      toast.error(err.response.statusText);
+    }
   };
 
   const handleEditGoal = (goal) => {
@@ -63,21 +115,29 @@ const Goal = () => {
     setIsEditModalVisible(true);
   };
 
-  const handleUpdateGoal = (values) => {
+  const handleUpdateGoal = async (values) => {
     const updatedGoal = {
       ...editingGoal,
+      id: editingGoal._id,
       name: values.name,
       targetAmount: values.targetAmount,
       currentAmount: values.currentAmount,
       deadline: values.deadline.format('YYYY-MM-DD'),
     };
-    updatedGoal.progress = calculateProgress(updatedGoal.currentAmount, updatedGoal.targetAmount);
-
-    setGoals(
-      goals.map((goal) => (goal.key === updatedGoal.key ? updatedGoal : goal))
-    );
+    try {
+      const response = await goalApi.updateGoal(updatedGoal);
+      if(!response.data.success) {
+        toast.error("Xảy ra lỗi khi sửa mục tiêu tài chính!");
+        return;
+      }
+      onLoadData();
+      toast.success('Mục tiêu tài chính đã được sửa!');
+    }
+    catch (err) {
+      toast.error(err.response.statusText);
+    }
     setIsEditModalVisible(false);
-    message.success('Mục tiêu đã được cập nhật!');
+    message.success('Mục tiêu tài chính đã được cập nhật!');
   };
 
   const columns = [
@@ -122,7 +182,7 @@ const Goal = () => {
           />
           <Popconfirm
             title="Bạn có chắc muốn xóa mục tiêu này?"
-            onConfirm={() => handleDeleteGoal(record.key)}
+            onConfirm={() => handleDeleteGoal(record._id)}
             okText="Có"
             cancelText="Không"
           >
@@ -208,7 +268,8 @@ const Goal = () => {
               dataSource={goals}
               columns={columns}
               bordered
-              pagination={{pageSize: 7, total: goals.length}}
+              pagination={{pageSize: pageSize, total: totalGoals, current: currentPage}}
+              onChange={handleTableChange}
             />
           </Col>
         </Row>

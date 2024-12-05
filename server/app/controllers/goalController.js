@@ -47,7 +47,7 @@ const goalController = {
         const newGoal = new Goal(payload);
         newGoal.save()
             .then(result => res.status(200).json({data: result, success: true,}))
-            .catch(err => res.status(500).json(err))
+            .catch(err => res.status(500).json({message: 'Internal Server Error'}))
     },
     updateGoal: (req, res) => {
         const { id, name, targetAmount, currentAmount, deadline} = req.body;
@@ -59,7 +59,7 @@ const goalController = {
             deadline,
         }
         Goal.findByIdAndUpdate(id, payload, {new: true})
-            .then(result => res.status(200).json(result))
+            .then(result => res.status(200).json({data: result, success: true,}))
             .catch(err => res.status(500).json(err))
     },
     deleteGoal: (req, res) => {
@@ -68,7 +68,7 @@ const goalController = {
             return res.status(400).json({message: 'Id is required'})
         }
         Goal.findByIdAndDelete(id)
-            .then(result => res.status(200).json({success: 'true'}))
+            .then(result => res.status(200).json({success: true}))
             .catch(err => res.status(500).json({message: 'Internal Server Error'}))
     },
 }
