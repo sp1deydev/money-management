@@ -7,7 +7,9 @@ const goalController = {
         const limit = req.query.limit ? parseInt(req.query.limit) : null;
         const order = req.query.order === 'desc' ? -1 : 1;
         const skip = limit ? (page - 1) * limit : 0;
-        let filters = {};
+        let filters = {
+            userId: req.userId
+        };
 
         //search by name
         const { name } = req.query
