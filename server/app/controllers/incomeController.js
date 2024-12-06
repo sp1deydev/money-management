@@ -158,14 +158,14 @@ const incomeController = {
             res.status(200).json({ success: true, data: result });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ success: false, message: 'Server error', error });
+            res.status(500).json({ success: false, message: 'Server Error', error });
         }
     },
     getIncomeByDate: async (req, res) => {
         try {
             const { month, year } = req.query; // Retrieve month, and year from query parameters
             const userId = req.userId;
-            
+
             if (!userId) {
                 return res.status(400).json({ success: false, message: 'userId is required' });
             }
