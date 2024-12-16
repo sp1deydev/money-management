@@ -5,6 +5,9 @@ export const incomeApi = {
     getAllIncomes: (data) => {
         return axiosClient.get(`${INCOMES_API_PATH}`, {params: data});
     },
+    getByType: () => {
+        return axiosClient.get(`${INCOMES_API_PATH}/get-by-type`);
+    },
     createIncome: (data) => {
         return axiosClient.post(`${INCOMES_API_PATH}/create`, data);
     },

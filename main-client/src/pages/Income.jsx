@@ -36,6 +36,7 @@ function Income() {
         { id: 4, type: 'Thu nhập không thường xuyên', value: 2000000, date: '2024-11-12' },
         { id: 5, type: 'Thu nhập khác', value: 1500000, date: '2024-11-15' },
     ]);
+    const [incomeByType, setIncomeByType] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [totalIncome, setTotalIncome] = useState();
@@ -51,7 +52,9 @@ function Income() {
             order: 'desc'
           }
           const response = await incomeApi.getAllIncomes(payload)
+          const statistics = await incomeApi.getByType();
           let incomes = [...response.data.data]
+          setIncomeByType(statistics.data.data)
           setIncomeRecords(incomes);
           setTotalIncome(response.data.meta.totalCount)
         }
@@ -186,9 +189,9 @@ function Income() {
     };
 
     const totalIncomeByCategory = (category) => {
-        return incomeRecords
+        return incomeByType
             .filter((record) => record.type === category)
-            .reduce((total, record) => total + record.value, 0);
+            .reduce((total, record) => total + record.total, 0);
     };
 
     // Add "Tháng" column based on "Ngày nhận"
