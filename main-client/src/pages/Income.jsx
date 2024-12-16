@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Card,
     Col,
@@ -22,7 +22,10 @@ import {
     DeleteOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
+import { toast } from 'react-toastify';
+import { incomeApi } from '../api/incomeApi';
 
+const pageSize = 4
 const { Title } = Typography;
 
 function Income() {
@@ -35,8 +38,30 @@ function Income() {
     ]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [totalIncome, setTotalIncome] = useState();
+    const [currentPage, setCurrentPage] = useState();
     const [currentIncome, setCurrentIncome] = useState(null);
     const [form] = Form.useForm();
+
+    const onLoadData = async () => {
+        try {
+          const payload = {
+            limit: pageSize,
+            page: currentPage,
+            order: 'desc'
+          }
+          const response = await incomeApi.getAllIncomes(payload)
+          let incomes = [...response.data.data]
+          setIncomeRecords(incomes);
+          setTotalIncome(response.data.meta.totalCount)
+        }
+        catch (err) {
+          toast.error(err);
+        }
+      };
+      useEffect(() => {
+        onLoadData();
+      }, [])
 
     const incomeTypes = [
         { label: 'Thu nhập chính / Lương', value: 'Thu nhập chính / Lương', color: '#FF6F61'},
@@ -69,6 +94,10 @@ function Income() {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
+    const handleTableChange = (pagination, filters, sorter) => {
+        setCurrentPage(pagination.current);
+      }
+
     const showAddIncomeModal = () => {
         setIsModalVisible(true);
         setCurrentIncome();
@@ -86,41 +115,72 @@ function Income() {
         setCurrentIncome(income);
         form.setFieldsValue({
             type: income.type,
-            value: formatInputCurrency(income.value),
+            value: income.value,
             date: moment(income.date),
         });
     };
 
-    const handleAddIncome = (values) => {
+    const handleAddIncome = async (values) => {
         const newIncome = {
-            id: incomeRecords.length + 1,
             type: values.type,
             value: parseCurrency(values.value),
             date: values.date.format('YYYY-MM-DD'),
-        };
-        setIncomeRecords([...incomeRecords, newIncome]);
+        }
+        try {
+          const response = await incomeApi.createIncome(newIncome);
+          if(!response.data.success) {
+            toast.error("Xảy ra lỗi khi thêm thu nhập tài chính!");
+            return;
+          }
+          setCurrentPage(1)
+          onLoadData();
+          toast.success('Thu nhập đã được thêm!');
+        }
+        catch (err) {
+          toast.error(err.response.statusText);
+        }
         setIsModalVisible(false);
     };
 
-    const handleEditIncome = (values) => {
+    const handleEditIncome = async (values) => {
         const updatedIncome = {
-            ...currentIncome,
-            type: values.type,
-            value: parseCurrency(values.value),
-            date: values.date.format('YYYY-MM-DD'),
-        };
-        setIncomeRecords(
-            incomeRecords.map((income) =>
-                income.id === currentIncome.id ? updatedIncome : income
-            )
-        );
+              ...currentIncome,
+              id: currentIncome._id,
+              type: values.type,
+              value: values.value,
+              date: values.date.format('YYYY-MM-DD'),
+            };
+            try {
+              const response = await incomeApi.updateIncome(updatedIncome);
+              if(!response.data.success) {
+                toast.error("Xảy ra lỗi khi sửa thu nhập!");
+                return;
+              }
+              onLoadData();
+              toast.success('Thu nhập đã được sửa!');
+            }
+            catch (err) {
+              toast.error(err.response.statusText);
+            }
         setIsModalVisible(false);
         setIsEditMode(false);
         form.resetFields();
     };
 
-    const handleDeleteIncome = (id) => {
-        setIncomeRecords(incomeRecords.filter((income) => income.id !== id));
+    const handleDeleteIncome = async (id) => {
+        try {
+          const response = await incomeApi.deleteIncome({id});
+          if(!response.data.success) {
+            toast.error("Xảy ra lỗi khi xóa thu nhập!");
+            return;
+          }
+          setCurrentPage(1);
+          onLoadData();
+          toast.success('Thu nhập đã được xóa!');
+        }
+        catch (err) {
+          toast.error(err.response.statusText);
+        }
     };
 
     const totalIncomeByCategory = (category) => {
@@ -167,7 +227,7 @@ function Income() {
                     <Button type="link" onClick={() => showEditIncomeModal(record)}>
                         <EditOutlined />
                     </Button>
-                    <Button danger type="link" onClick={() => handleDeleteIncome(record.id)}>
+                    <Button danger type="link" onClick={() => handleDeleteIncome(record._id)}>
                         <DeleteOutlined />
                     </Button>
                 </span>
@@ -289,7 +349,8 @@ function Income() {
                 dataSource={addMonthColumn(incomeRecords)} // Add "month" column dynamically
                 rowKey="id"
                 style={{ marginTop: 20 }}
-                pagination={{pageSize: 4, total: incomeRecords.length}}
+                pagination={{pageSize: pageSize, total: totalIncome, current: currentPage}}
+                onChange={handleTableChange}
             />
 
             {renderIncomeModal()}
