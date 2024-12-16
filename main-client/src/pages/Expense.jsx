@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Card,
     Col,
@@ -22,19 +22,18 @@ import {
     DeleteOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
+import { expenseApi } from '../api/expenseApi';
+import { toast } from 'react-toastify';
 
+const pageSize = 4;
 const { Title } = Typography;
 
 function Expenses() {
-    const [expenseRecords, setExpenseRecords] = useState([
-        { id: 1, type: 'Chi phí sinh hoạt', value: 2000000, date: '2024-11-01', note: 'Mua sắm nhu yếu phẩm' },
-        { id: 2, type: 'Chi phí giải trí & sở thích', value: 1500000, date: '2024-11-05', note: 'Xem phim' },
-        { id: 3, type: 'Chi phí chăm sóc sức khỏe', value: 1000000, date: '2024-11-10', note: 'Khám sức khỏe' },
-        { id: 4, type: 'Tiết kiệm & đầu tư', value: 2000000, date: '2024-11-12', note: 'Gửi tiết kiệm ngân hàng' },
-        { id: 5, type: 'Khác', value: 500000, date: '2024-11-15', note: 'Mua quà tặng' },
-    ]);
-
+    const [expenseRecords, setExpenseRecords] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [expenseByType, setExpenseByType] = useState([]);
+    const [totalExpense, setTotalExpense] = useState();
+    const [currentPage, setCurrentPage] = useState();
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentExpense, setCurrentExpense] = useState(null);
     const [form] = Form.useForm();
@@ -48,6 +47,28 @@ function Expenses() {
         { name: 'Khác', color: '#E0A75E', icon: <AppstoreTwoTone twoToneColor="#E0A75E" style={{ fontSize: 48 }} /> },
     ];
 
+    const onLoadData = async () => {
+      try {
+        const payload = {
+          limit: pageSize,
+          page: currentPage,
+          order: 'desc'
+        }
+        const response = await expenseApi.getAllExpenses(payload)
+        const statistics = await expenseApi.getByType();
+        let expenses = [...response.data.data]
+        setExpenseByType(statistics.data.data)
+        setExpenseRecords(expenses);
+        setTotalExpense(response.data.meta.totalCount)
+      }
+      catch (err) {
+        toast.error(err);
+      }
+    };
+    useEffect(() => {
+      onLoadData();
+    }, [currentPage])
+
     const formatCurrency = (value) =>
         new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 
@@ -60,39 +81,74 @@ function Expenses() {
         }
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
-    const handleAddExpense = (values) => {
+    const handleAddExpense = async (values) => {
         const newExpense = {
-            id: expenseRecords.length + 1,
             type: values.type,
             value: parseCurrency(values.value),
             date: values.date.format('YYYY-MM-DD'),
             note: values.note,
         };
-        setExpenseRecords([...expenseRecords, newExpense]);
+        try {
+          const response = await expenseApi.createExpense(newExpense);
+          if(!response.data.success) {
+            toast.error("Xảy ra lỗi khi thêm khoản chi tiêu!");
+            return;
+          }
+          setCurrentPage(1)
+          onLoadData();
+          toast.success('Khoản chi tiêu đã được thêm!');
+        }
+        catch (err) {
+          toast.error(err.response.statusText);
+        }
         setIsModalVisible(false);
     };
 
-    const handleEditExpense = (values) => {
+    const handleEditExpense = async (values) => {
         const updatedExpense = {
             ...currentExpense,
+            id: currentExpense._id,
             type: values.type,
             value: parseCurrency(values.value),
             date: values.date.format('YYYY-MM-DD'),
             note: values.note,
         };
-        setExpenseRecords(
-            expenseRecords.map((expense) =>
-                expense.id === currentExpense.id ? updatedExpense : expense
-            )
-        );
+        try {
+          const response = await expenseApi.updateExpense(updatedExpense);
+          if(!response.data.success) {
+            toast.error("Xảy ra lỗi khi sửa khoản chi tiêu!");
+            return;
+          }
+          onLoadData();
+          toast.success('Khoản chi tiêu đã được sửa!');
+        }
+        catch (err) {
+          toast.error(err.response.statusText);
+        }
         setIsModalVisible(false);
         setIsEditMode(false);
         form.resetFields();
     };
 
-    const handleDeleteExpense = (id) => {
-        setExpenseRecords(expenseRecords.filter((expense) => expense.id !== id));
+    const handleDeleteExpense = async (id) => {
+        try {
+          const response = await expenseApi.deleteExpense({id});
+          if(!response.data.success) {
+            toast.error("Xảy ra lỗi khi xóa khoản chi tiêu!");
+            return;
+          }
+          setCurrentPage(1);
+          onLoadData();
+          toast.success('Khoản chi tiêu đã được xóa!');
+        }
+        catch (err) {
+          toast.error(err.response.statusText);
+        }
     };
+
+    const handleTableChange = (pagination, filters, sorter) => {
+        setCurrentPage(pagination.current);
+    }
 
     const renderExpenseModal = () => (
         <Modal
@@ -178,7 +234,7 @@ function Expenses() {
                     <Button type="link" onClick={() => showEditExpenseModal(record)}>
                         <EditOutlined />
                     </Button>
-                    <Button danger type="link" onClick={() => handleDeleteExpense(record.id)}>
+                    <Button danger type="link" onClick={() => handleDeleteExpense(record._id)}>
                         <DeleteOutlined />
                     </Button>
                 </span>
@@ -231,9 +287,9 @@ function Expenses() {
                                 <div>
                                     <div className="number_total">
                                         {formatCurrency(
-                                            expenseRecords
+                                            expenseByType
                                                 .filter((record) => record.type === category.name)
-                                                .reduce((total, record) => total + record.value, 0)
+                                                .reduce((total, record) => total + record.total, 0)
                                         )}
                                     </div>
                                     <div className="title_total" style={{ color: category.color }}>
@@ -264,7 +320,8 @@ function Expenses() {
                 }))}
                 rowKey="id"
                 style={{ marginTop: 20 }}
-                pagination={{pageSize: 4, total: expenseRecords.length}}
+                pagination={{pageSize: pageSize, total: totalExpense, current: currentPage}}
+                onChange={handleTableChange}
             />
 
             {renderExpenseModal()}

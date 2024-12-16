@@ -99,7 +99,7 @@ function Income() {
 
     const handleTableChange = (pagination, filters, sorter) => {
         setCurrentPage(pagination.current);
-      }
+    }
 
     const showAddIncomeModal = () => {
         setIsModalVisible(true);
@@ -133,12 +133,12 @@ function Income() {
         try {
           const response = await incomeApi.createIncome(newIncome);
           if(!response.data.success) {
-            toast.error("Xảy ra lỗi khi thêm thu nhập tài chính!");
+            toast.error("Xảy ra lỗi khi thêm khoản thu nhập!");
             return;
           }
           setCurrentPage(1)
           onLoadData();
-          toast.success('Thu nhập đã được thêm!');
+          toast.success('Khoản thu nhập đã được thêm!');
         }
         catch (err) {
           toast.error(err.response.statusText);
@@ -154,18 +154,18 @@ function Income() {
               value: values.value,
               date: values.date.format('YYYY-MM-DD'),
             };
-            try {
-              const response = await incomeApi.updateIncome(updatedIncome);
-              if(!response.data.success) {
-                toast.error("Xảy ra lỗi khi sửa thu nhập!");
-                return;
-              }
-              onLoadData();
-              toast.success('Thu nhập đã được sửa!');
-            }
-            catch (err) {
-              toast.error(err.response.statusText);
-            }
+        try {
+          const response = await incomeApi.updateIncome(updatedIncome);
+          if(!response.data.success) {
+            toast.error("Xảy ra lỗi khi sửa khoản thu nhập!");
+            return;
+          }
+          onLoadData();
+          toast.success('Khoản thu nhập đã được sửa!');
+        }
+        catch (err) {
+          toast.error(err.response.statusText);
+        }
         setIsModalVisible(false);
         setIsEditMode(false);
         setCurrentIncome();
@@ -176,12 +176,12 @@ function Income() {
         try {
           const response = await incomeApi.deleteIncome({id});
           if(!response.data.success) {
-            toast.error("Xảy ra lỗi khi xóa thu nhập!");
+            toast.error("Xảy ra lỗi khi xóa khoản thu nhập!");
             return;
           }
           setCurrentPage(1);
           onLoadData();
-          toast.success('Thu nhập đã được xóa!');
+          toast.success('Khoản thu nhập đã được xóa!');
         }
         catch (err) {
           toast.error(err.response.statusText);
