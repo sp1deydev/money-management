@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Bar,
     CartesianGrid,
@@ -22,10 +22,16 @@ import {
     Typography,
 } from 'antd';
 import { DollarTwoTone, HeartTwoTone, SmileTwoTone, HomeTwoTone, SafetyCertificateTwoTone, AppstoreTwoTone } from '@ant-design/icons';
+import Loading from '../components/loading';
 
 const { Title } = Typography;
 
 const ExpenseDashboard = () => {
+    const [isLoading, setIsLoading] = useState(true)
+    useEffect(() => {
+        const testLoading = setTimeout(() => {setIsLoading(false)}, 1000)
+        return () => clearTimeout(testLoading)
+    }, [])
     const balance = 12000000; // Current balance
     const currencyFormatter = (value) =>
         new Intl.NumberFormat('vi-VN', {
@@ -102,6 +108,7 @@ const ExpenseDashboard = () => {
     ];
 
     return (
+        (isLoading ? <Loading secondLoading={true}/> :
         <div>
             <Spin spinning={false}>
                 <div className="container" style={{ backgroundColor: '#E8F5E9' }}>
@@ -243,7 +250,7 @@ const ExpenseDashboard = () => {
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>
         </div>
-    );
+    ));
 };
 
 export default ExpenseDashboard;

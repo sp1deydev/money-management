@@ -24,6 +24,7 @@ import {
 import moment from 'moment';
 import { expenseApi } from '../api/expenseApi';
 import { toast } from 'react-toastify';
+import Loading from '../components/loading';
 
 const pageSize = 4;
 const { Title } = Typography;
@@ -33,6 +34,7 @@ function Expenses() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [expenseByType, setExpenseByType] = useState([]);
     const [totalExpense, setTotalExpense] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState();
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentExpense, setCurrentExpense] = useState(null);
@@ -54,15 +56,18 @@ function Expenses() {
           page: currentPage,
           order: 'desc'
         }
+        setIsLoading(true)
         const response = await expenseApi.getAllExpenses(payload)
         const statistics = await expenseApi.getByType();
         let expenses = [...response.data.data]
         setExpenseByType(statistics.data.data)
         setExpenseRecords(expenses);
         setTotalExpense(response.data.meta.totalCount)
+        setIsLoading(false)
       }
       catch (err) {
         toast.error(err);
+        setIsLoading(false)
       }
     };
     useEffect(() => {
@@ -274,7 +279,7 @@ function Expenses() {
     };
 
     return (
-        <div>
+        (isLoading ? <Loading secondLoading={true}/>:<div>
             <Title level={4} style={{ color: '#444' }}>
                 Quản lý chi tiêu
             </Title>
@@ -326,6 +331,7 @@ function Expenses() {
 
             {renderExpenseModal()}
         </div>
+        )
     );
 }
 

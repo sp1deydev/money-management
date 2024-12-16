@@ -9,6 +9,7 @@ import { userApi } from '../api/userApi';
 import { EditOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../helpers/toUpperCase';
+import Loading from '../components/loading';
 
 UserInfo.propTypes = {
     
@@ -22,6 +23,7 @@ function UserInfo(props) {
   const [messageApi, contextHolder] = message.useMessage();
   const currentUser = useSelector((state) => state.user.currentUser) || {};
   const [editElement, setEditElement] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [editValue, setEditValue] = useState();
 
   //delete account
@@ -158,6 +160,7 @@ function UserInfo(props) {
   }
 
   return (
+    (isLoading ? <Loading secondLoading={true}/>:
     <div style={{margin: '20px 0px 0px 0px'}}>
       <div>
         {contextHolder} {/* message validate form */}
@@ -343,7 +346,7 @@ function UserInfo(props) {
         </Card>
       </div>
     </div>
-  );
+  ));
 }
 
 export default UserInfo;

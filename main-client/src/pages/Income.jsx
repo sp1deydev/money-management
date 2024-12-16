@@ -24,6 +24,7 @@ import {
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { incomeApi } from '../api/incomeApi';
+import Loading from '../components/loading';
 
 const pageSize = 4
 const { Title } = Typography;
@@ -39,6 +40,7 @@ function Income() {
     const [incomeByType, setIncomeByType] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [totalIncome, setTotalIncome] = useState();
     const [currentPage, setCurrentPage] = useState();
     const [currentIncome, setCurrentIncome] = useState(null);
@@ -51,15 +53,18 @@ function Income() {
             page: currentPage,
             order: 'desc'
           }
+          setIsLoading(true)
           const response = await incomeApi.getAllIncomes(payload)
           const statistics = await incomeApi.getByType();
           let incomes = [...response.data.data]
           setIncomeByType(statistics.data.data)
           setIncomeRecords(incomes);
           setTotalIncome(response.data.meta.totalCount)
+          setIsLoading(false)
         }
         catch (err) {
           toast.error(err);
+          setIsLoading(false)
         }
       };
       useEffect(() => {
@@ -303,6 +308,7 @@ function Income() {
     );
 
     return (
+        (isLoading ? <Loading secondLoading={true}/>:
         <div>
             <Title level={4} style={{ color: '#444' }}>
                Quản lý thu nhập
@@ -360,7 +366,7 @@ function Income() {
 
             {renderIncomeModal()}
         </div>
-    );
+    ));
 }
 
 export default Income;

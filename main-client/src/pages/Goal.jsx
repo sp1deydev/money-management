@@ -19,6 +19,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { goalApi } from '../api/goalApi';
+import Loading from '../components/loading';
 
 const pageSize = 7
 const { Title } = Typography;
@@ -29,6 +30,7 @@ const Goal = () => {
   const [editForm] = Form.useForm();
   const [goals, setGoals] = useState([]);
   const [totalGoals, setTotalGoals] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState();
   const [editingGoal, setEditingGoal] = useState(null);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -45,6 +47,7 @@ const Goal = () => {
         page: currentPage,
         order: 'desc'
       }
+      setIsLoading(true)
       const response = await goalApi.getAllGoals(payload)
       let goals = [...response.data.data]
       goals.forEach(goal => {
@@ -52,9 +55,11 @@ const Goal = () => {
       })
       setGoals(goals);
       setTotalGoals(response.data.meta.totalCount)
+      setIsLoading(false)
     }
     catch (err) {
       toast.error(err);
+      setIsLoading(false)
     }
   };
   useEffect(() => {
@@ -194,6 +199,7 @@ const Goal = () => {
   ];
 
   return (
+    (isLoading ? <Loading secondLoading={true}/>:
     <Layout style={{ height: '100vh', backgroundColor: '#E8F5E9' }}>
       <Title level={4} style={{ color: '#444' }}>
         Mục tiêu tài chính
@@ -325,7 +331,7 @@ const Goal = () => {
         </Modal>
       </Content>
     </Layout>
-  );
+  ));
 };
 
 export default Goal;
