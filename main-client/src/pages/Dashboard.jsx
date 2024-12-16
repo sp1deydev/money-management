@@ -23,15 +23,17 @@ import {
 } from 'antd';
 import { DollarTwoTone, HeartTwoTone, SmileTwoTone, HomeTwoTone, SafetyCertificateTwoTone, AppstoreTwoTone } from '@ant-design/icons';
 import Loading from '../components/loading';
+import { toast } from 'react-toastify';
+import { expenseApi } from '../api/expenseApi';
 
 const { Title } = Typography;
 
 const ExpenseDashboard = () => {
-    const [isLoading, setIsLoading] = useState(true)
-    useEffect(() => {
-        const testLoading = setTimeout(() => {setIsLoading(false)}, 1000)
-        return () => clearTimeout(testLoading)
-    }, [])
+    const [isLoading, setIsLoading] = useState(false)
+    // useEffect(() => {
+    //     const testLoading = setTimeout(() => {setIsLoading(false)}, 1000)
+    //     return () => clearTimeout(testLoading)
+    // }, [])
     const balance = 12000000; // Current balance
     const currencyFormatter = (value) =>
         new Intl.NumberFormat('vi-VN', {
@@ -40,44 +42,44 @@ const ExpenseDashboard = () => {
         }).format(value);
 
     // Expense categories with harmonious colors
-    const expenseCategories = [
+    const [expenseCategories, setExpenseCategories] = useState([
         {
             name: 'Chi phí sinh hoạt',
-            value: 5000000,
+            value: 0,
             color: '#FF6F61',  // Soft Coral
             icon: <HomeTwoTone twoToneColor="#FF6F61" style={{ fontSize: 48 }} />,
         },
         {
             name: 'Chi phí giải trí & sở thích',
-            value: 3000000,
+            value: 0,
             color: '#6A9FB5',  // Soft Blue
             icon: <SmileTwoTone twoToneColor="#6A9FB5" style={{ fontSize: 48 }} />,
         },
         {
             name: 'Chi phí chăm sóc sức khỏe',
-            value: 2000000,
+            value: 0,
             color: '#4F75FF',  // Gold
             icon: <HeartTwoTone twoToneColor="#4F75FF" style={{ fontSize: 48 }} />,
         },
         {
             name: 'Tiết kiệm & đầu tư',
-            value: 4000000,
+            value: 0,
             color: '#4CAF50',  // Green
             icon: <SafetyCertificateTwoTone twoToneColor="#4CAF50" style={{ fontSize: 48 }} />,
         },
         {
             name: 'Chi phí gia đình',
-            value: 3500000,
+            value: 0,
             color: '#6A1B9A',  // Purple
             icon: <HomeTwoTone twoToneColor="#6A1B9A" style={{ fontSize: 48 }} />,
         },
         {
             name: 'Khác',
-            value: 1500000,
+            value: 0,
             color: '#E0A75E',  // Slate Gray
             icon: <AppstoreTwoTone twoToneColor="#E0A75E" style={{ fontSize: 48 }} />,
         },
-    ];
+    ]);
 
     const weeklyExpenses = [
         { name: 'Tuần 1', total: 4000000 },
@@ -107,6 +109,78 @@ const ExpenseDashboard = () => {
         { name: 'Năm 2024', total: 180000000 },
     ];
 
+    const onLoadData = async () => {
+          try {
+            setIsLoading(true)
+            const statistics = await expenseApi.getByType();
+            console.log(statistics)
+            const formattedData = statistics.data.data.map((item) => {
+                switch (item.type) {
+                  case "Chi phí sinh hoạt":
+                    console.log(item.type);
+                    return {
+                      name: item.type,
+                      value: item.total,
+                      color: "#FF6F61", // Soft Coral
+                      icon: <HomeTwoTone twoToneColor="#FF6F61" style={{ fontSize: 48 }} />,
+                    };
+                  case "Chi phí giải trí & sở thích":
+                    return {
+                      name: item.type,
+                      value: item.total,
+                      color: "#6A9FB5", // Soft Blue
+                      icon: <SmileTwoTone twoToneColor="#6A9FB5" style={{ fontSize: 48 }} />,
+                    };
+                  case "Chi phí chăm sóc sức khỏe":
+                    return {
+                      name: item.type,
+                      value: item.total,
+                      color: "#4F75FF", // Gold
+                      icon: <HeartTwoTone twoToneColor="#4F75FF" style={{ fontSize: 48 }} />,
+                    };
+                  case "Chi phí gia đình":
+                    return {
+                      name: item.type,
+                      value: item.total,
+                      color: "#6A1B9A", // Gold
+                      icon: <HomeTwoTone twoToneColor="#6A1B9A" style={{ fontSize: 48 }} />,
+                    };
+                  case "Tiết kiệm & đầu tư":
+                    return {
+                      name: item.type,
+                      value: item.total,
+                      color: "#4CAF50", // Green
+                      icon: (
+                        <SafetyCertificateTwoTone
+                          twoToneColor="#4CAF50"
+                          style={{ fontSize: 48 }}
+                        />
+                      ),
+                    };
+                  case "Khác":
+                    return {
+                      name: "Khác",
+                      value: item.total,
+                      color: "#E0A75E", // Slate Gray
+                      icon: (
+                        <AppstoreTwoTone twoToneColor="#E0A75E" style={{ fontSize: 48 }} />
+                      ),
+                    };
+                }
+            });
+            console.log(formattedData)
+            setExpenseCategories(formattedData)
+            setIsLoading(false)
+          }
+          catch (err) {
+            toast.error(err);
+            setIsLoading(false)
+          }
+        };
+        useEffect(() => {
+          onLoadData();
+        }, [])
+
     return (
         (isLoading ? <Loading secondLoading={true}/> :
         <div>
@@ -132,7 +206,7 @@ const ExpenseDashboard = () => {
                     </Row>
 
                     {/* Category Cards */}
-                    <Title level={4} style={{ marginTop: 40, color: '#444' }}>Chi tiêu theo danh mục</Title>
+                    {/* <Title level={4} style={{ marginTop: 40, color: '#444' }}>Chi tiêu theo danh mục</Title>
                     <Row gutter={[12, 12]}>
                         {expenseCategories.map((category, index) => (
                             <Col span={8} key={index}>
@@ -151,13 +225,13 @@ const ExpenseDashboard = () => {
                                 </Card>
                             </Col>
                         ))}
-                    </Row>
+                    </Row> */}
 
                     {/* Charts */}
                     <Row gutter={12} style={{ marginTop: 40 }}>
                         <Col span={12}>
                             <div className="chart">
-                                <Title level={4} style={{ color: '#444' }}>Phân bổ theo danh mục</Title>
+                                <Title level={4} style={{ color: '#444' }}>Phân bổ chi tiêu theo danh mục</Title>
                                 <ResponsiveContainer width="100%" aspect={2 / 1}>
                                     <PieChart>
                                         <Pie
@@ -166,7 +240,7 @@ const ExpenseDashboard = () => {
                                             nameKey="name"
                                             cx="50%"
                                             cy="50%"
-                                            outerRadius={140}
+                                            // outerRadius={140}
                                             fill="#8884d8"
                                             label={(entry) =>
                                                 `${entry.name}`
