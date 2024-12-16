@@ -61,7 +61,7 @@ function Income() {
       };
       useEffect(() => {
         onLoadData();
-      }, [])
+      }, [currentPage])
 
     const incomeTypes = [
         { label: 'Thu nhập chính / Lương', value: 'Thu nhập chính / Lương', color: '#FF6F61'},
@@ -100,6 +100,7 @@ function Income() {
 
     const showAddIncomeModal = () => {
         setIsModalVisible(true);
+        setIsEditMode(false)
         setCurrentIncome();
         form.setFieldsValue({
             type: '',
@@ -164,6 +165,7 @@ function Income() {
             }
         setIsModalVisible(false);
         setIsEditMode(false);
+        setCurrentIncome();
         form.resetFields();
     };
 
