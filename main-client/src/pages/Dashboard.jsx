@@ -42,44 +42,7 @@ const ExpenseDashboard = () => {
         }).format(value);
 
     // Expense categories with harmonious colors
-    const [expenseCategories, setExpenseCategories] = useState([
-        {
-            name: 'Chi phí sinh hoạt',
-            value: 0,
-            color: '#FF6F61',  // Soft Coral
-            icon: <HomeTwoTone twoToneColor="#FF6F61" style={{ fontSize: 48 }} />,
-        },
-        {
-            name: 'Chi phí giải trí & sở thích',
-            value: 0,
-            color: '#6A9FB5',  // Soft Blue
-            icon: <SmileTwoTone twoToneColor="#6A9FB5" style={{ fontSize: 48 }} />,
-        },
-        {
-            name: 'Chi phí chăm sóc sức khỏe',
-            value: 0,
-            color: '#4F75FF',  // Gold
-            icon: <HeartTwoTone twoToneColor="#4F75FF" style={{ fontSize: 48 }} />,
-        },
-        {
-            name: 'Tiết kiệm & đầu tư',
-            value: 0,
-            color: '#4CAF50',  // Green
-            icon: <SafetyCertificateTwoTone twoToneColor="#4CAF50" style={{ fontSize: 48 }} />,
-        },
-        {
-            name: 'Chi phí gia đình',
-            value: 0,
-            color: '#6A1B9A',  // Purple
-            icon: <HomeTwoTone twoToneColor="#6A1B9A" style={{ fontSize: 48 }} />,
-        },
-        {
-            name: 'Khác',
-            value: 0,
-            color: '#E0A75E',  // Slate Gray
-            icon: <AppstoreTwoTone twoToneColor="#E0A75E" style={{ fontSize: 48 }} />,
-        },
-    ]);
+    const [expenseCategories, setExpenseCategories] = useState([]);
 
     const weeklyExpenses = [
         { name: 'Tuần 1', total: 4000000 },
@@ -109,66 +72,68 @@ const ExpenseDashboard = () => {
         { name: 'Năm 2024', total: 180000000 },
     ];
 
+    const formatPieChartData = (data) => {
+        const newData = data.map((item) => {
+            switch (item.type) {
+              case "Chi phí sinh hoạt":
+                return {
+                  name: item.type,
+                  value: item.total,
+                  color: "#FF6F61", // Soft Coral
+                  icon: <HomeTwoTone twoToneColor="#FF6F61" style={{ fontSize: 48 }} />,
+                };
+              case "Chi phí giải trí & sở thích":
+                return {
+                  name: item.type,
+                  value: item.total,
+                  color: "#6A9FB5", // Soft Blue
+                  icon: <SmileTwoTone twoToneColor="#6A9FB5" style={{ fontSize: 48 }} />,
+                };
+              case "Chi phí chăm sóc sức khỏe":
+                return {
+                  name: item.type,
+                  value: item.total,
+                  color: "#4F75FF", // Gold
+                  icon: <HeartTwoTone twoToneColor="#4F75FF" style={{ fontSize: 48 }} />,
+                };
+              case "Chi phí gia đình":
+                return {
+                  name: item.type,
+                  value: item.total,
+                  color: "#6A1B9A", // Gold
+                  icon: <HomeTwoTone twoToneColor="#6A1B9A" style={{ fontSize: 48 }} />,
+                };
+              case "Tiết kiệm & đầu tư":
+                return {
+                  name: item.type,
+                  value: item.total,
+                  color: "#4CAF50", // Green
+                  icon: (
+                    <SafetyCertificateTwoTone
+                      twoToneColor="#4CAF50"
+                      style={{ fontSize: 48 }}
+                    />
+                  ),
+                };
+              case "Khác":
+                return {
+                  name: "Khác",
+                  value: item.total,
+                  color: "#E0A75E", // Slate Gray
+                  icon: (
+                    <AppstoreTwoTone twoToneColor="#E0A75E" style={{ fontSize: 48 }} />
+                  ),
+                };
+            }
+        });
+        return newData
+    }
+
     const onLoadData = async () => {
           try {
             setIsLoading(true)
             const statistics = await expenseApi.getByType();
-            console.log(statistics)
-            const formattedData = statistics.data.data.map((item) => {
-                switch (item.type) {
-                  case "Chi phí sinh hoạt":
-                    console.log(item.type);
-                    return {
-                      name: item.type,
-                      value: item.total,
-                      color: "#FF6F61", // Soft Coral
-                      icon: <HomeTwoTone twoToneColor="#FF6F61" style={{ fontSize: 48 }} />,
-                    };
-                  case "Chi phí giải trí & sở thích":
-                    return {
-                      name: item.type,
-                      value: item.total,
-                      color: "#6A9FB5", // Soft Blue
-                      icon: <SmileTwoTone twoToneColor="#6A9FB5" style={{ fontSize: 48 }} />,
-                    };
-                  case "Chi phí chăm sóc sức khỏe":
-                    return {
-                      name: item.type,
-                      value: item.total,
-                      color: "#4F75FF", // Gold
-                      icon: <HeartTwoTone twoToneColor="#4F75FF" style={{ fontSize: 48 }} />,
-                    };
-                  case "Chi phí gia đình":
-                    return {
-                      name: item.type,
-                      value: item.total,
-                      color: "#6A1B9A", // Gold
-                      icon: <HomeTwoTone twoToneColor="#6A1B9A" style={{ fontSize: 48 }} />,
-                    };
-                  case "Tiết kiệm & đầu tư":
-                    return {
-                      name: item.type,
-                      value: item.total,
-                      color: "#4CAF50", // Green
-                      icon: (
-                        <SafetyCertificateTwoTone
-                          twoToneColor="#4CAF50"
-                          style={{ fontSize: 48 }}
-                        />
-                      ),
-                    };
-                  case "Khác":
-                    return {
-                      name: "Khác",
-                      value: item.total,
-                      color: "#E0A75E", // Slate Gray
-                      icon: (
-                        <AppstoreTwoTone twoToneColor="#E0A75E" style={{ fontSize: 48 }} />
-                      ),
-                    };
-                }
-            });
-            console.log(formattedData)
+            const formattedData = formatPieChartData(statistics.data.data);
             setExpenseCategories(formattedData)
             setIsLoading(false)
           }
