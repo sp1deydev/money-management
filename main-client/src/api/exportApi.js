@@ -4,6 +4,9 @@ import fileClient from "./fileClient";
 
 export const exportApi = {
     downloadIncome: () => {
-        return fileClient.post('http://localhost:3001/export/');
+        return fileClient.post(`${EXPORT_API_PATH}/income`);
+    },
+    downloadExpense: () => {
+        return fileClient.post(`${EXPORT_API_PATH}/expense`);
     },
 }

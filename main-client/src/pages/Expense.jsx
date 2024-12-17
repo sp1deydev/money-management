@@ -20,11 +20,14 @@ import {
     AppstoreTwoTone,
     EditOutlined,
     DeleteOutlined,
+    DownloadOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 import { expenseApi } from '../api/expenseApi';
 import { toast } from 'react-toastify';
 import Loading from '../components/loading';
+import { exportApi } from '../api/exportApi';
+import FileSaver from 'file-saver'
 
 const pageSize = 4;
 const { Title } = Typography;
@@ -307,12 +310,24 @@ function Expenses() {
                     </Col>
                 ))}
             </Row>
-
+            <Button
+                // type="primary"
+                icon={<DownloadOutlined />}
+                onClick={async () => {
+                    const data = await exportApi.downloadExpense();
+                    // If you want to download file automatically using link attribute.
+                    const blob = new Blob([data.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',});
+                    FileSaver.saveAs(blob, 'expense.xlsx')
+                }}
+                style={{ marginTop: 20, marginBottom: 20, float: 'right' }}
+            >
+                Excel
+            </Button>
             <Button
                 type="primary"
                 icon={<EditOutlined />}
                 onClick={showAddExpenseModal}
-                style={{ marginTop: 20, marginBottom: 20, float: 'right' }}
+                style={{ marginTop: 20, marginBottom: 20, marginRight: 12, float: 'right' }}
             >
                 Thêm chi tiêu
             </Button>

@@ -355,7 +355,6 @@ function Income() {
                     const data = await exportApi.downloadIncome();
                     // If you want to download file automatically using link attribute.
                     const blob = new Blob([data.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',});
-                    console.log(blob);
                     FileSaver.saveAs(blob, 'income.xlsx')
                 }}
                 style={{ marginTop: 20, marginBottom: 20, float: 'right' }}
