@@ -20,11 +20,14 @@ import {
     AppstoreOutlined,
     EditOutlined,
     DeleteOutlined,
+    DownloadOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { incomeApi } from '../api/incomeApi';
 import Loading from '../components/loading';
+import FileSaver from 'file-saver'
+import { exportApi } from '../api/exportApi';
 
 const pageSize = 4
 const { Title } = Typography;
@@ -345,12 +348,25 @@ function Income() {
                     </Col>
                 ))}
             </Row>
-
+            <Button
+                // type="primary"
+                icon={<DownloadOutlined />}
+                onClick={async () => {
+                    const data = await exportApi.downloadIncome();
+                    // If you want to download file automatically using link attribute.
+                    const blob = new Blob([data.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',});
+                    console.log(blob);
+                    FileSaver.saveAs(blob, 'income.xlsx')
+                }}
+                style={{ marginTop: 20, marginBottom: 20, float: 'right' }}
+            >
+                Excel
+            </Button>
             <Button
                 type="primary"
                 icon={<EditOutlined />}
                 onClick={showAddIncomeModal}
-                style={{ marginTop: 20, marginBottom: 20, float: 'right' }}
+                style={{ marginTop: 20, marginBottom: 20, marginRight: 12, float: 'right' }}
             >
                 Thêm thu nhập
             </Button>
