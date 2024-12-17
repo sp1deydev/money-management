@@ -4,7 +4,8 @@ const exportController = require('../controllers/exportController');
 const { checkLogin } = require('../middleware/auth');
 
 
-router.post('/', checkLogin, exportController.exportIncome);
+router.post('/income', checkLogin, exportController.exportIncome);
+router.post('/expense', checkLogin, exportController.exportExpense);
 
 module.exports = router;
 
