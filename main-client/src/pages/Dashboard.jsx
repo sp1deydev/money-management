@@ -41,36 +41,10 @@ const ExpenseDashboard = () => {
             currency: 'VND',
         }).format(value);
 
-    // Expense categories with harmonious colors
     const [expenseCategories, setExpenseCategories] = useState([]);
-
-    const weeklyExpenses = [
-        { name: 'Tuần 1', total: 4000000 },
-        { name: 'Tuần 2', total: 3000000 },
-        { name: 'Tuần 3', total: 5000000 },
-        { name: 'Tuần 4', total: 2000000 },
-    ];
-
-    const monthlyExpenses = [
-        { name: 'Tháng 1', total: 12000000 },
-        { name: 'Tháng 2', total: 8000000 },
-        { name: 'Tháng 3', total: 15000000 },
-        { name: 'Tháng 4', total: 11000000 },
-        { name: 'Tháng 5', total: 17000000 },
-        { name: 'Tháng 6', total: 10000000 },
-        { name: 'Tháng 7', total: 9000000 },
-        { name: 'Tháng 8', total: 14000000 },
-        { name: 'Tháng 9', total: 13000000 },
-        { name: 'Tháng 10', total: 15000000 },
-        { name: 'Tháng 11', total: 12000000 },
-        { name: 'Tháng 12', total: 16000000 },
-    ];
-
-    const yearlyExpenses = [
-        { name: 'Năm 2022', total: 150000000 },
-        { name: 'Năm 2023', total: 160000000 },
-        { name: 'Năm 2024', total: 180000000 },
-    ];
+    const [weeklyExpenses, setWeeklyExpenses] = useState([]);
+    const [monthlyExpenses, setMonthlyExpenses] = useState([]);
+    const [yearlyExpenses, setYearlyExpenses] = useState([]);
 
     const formatPieChartData = (data) => {
         const newData = data.map((item) => {
@@ -133,6 +107,12 @@ const ExpenseDashboard = () => {
           try {
             setIsLoading(true)
             const statistics = await expenseApi.getByType();
+            const dataByWeek = await expenseApi.getByWeek({month: 12, year: 2024});
+            const dataByMonth = await expenseApi.getByDate({year: 2024});
+            const dataByYear = await expenseApi.getByDate();
+            setWeeklyExpenses(dataByWeek.data.data)
+            setMonthlyExpenses(dataByMonth.data.data)
+            setYearlyExpenses(dataByYear.data.data)
             const formattedData = formatPieChartData(statistics.data.data);
             setExpenseCategories(formattedData)
             setIsLoading(false)
@@ -235,7 +215,7 @@ const ExpenseDashboard = () => {
                                         <XAxis dataKey="name" />
                                         <YAxis />
                                         <Tooltip />
-                                        <Legend />
+                                        {/* <Legend /> */}
                                         <Bar dataKey="total" barSize={20} fill="#66BB6A" />
                                         <Line type="monotone" dataKey="total" stroke="#7E57C2" />
                                     </ComposedChart>
@@ -255,10 +235,10 @@ const ExpenseDashboard = () => {
                                         margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                                     >
                                         <CartesianGrid stroke="#f5f5f5" />
-                                        <XAxis dataKey="name" />
+                                        <XAxis dataKey="month" />
                                         <YAxis />
                                         <Tooltip />
-                                        <Legend />
+                                        {/* <Legend /> */}
                                         <Bar dataKey="total" barSize={20} fill="#42A5F5" />
                                         <Line type="monotone" dataKey="total" stroke="#F44336" />
                                     </ComposedChart>
@@ -274,10 +254,10 @@ const ExpenseDashboard = () => {
                                         margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                                     >
                                         <CartesianGrid stroke="#f5f5f5" />
-                                        <XAxis dataKey="name" />
+                                        <XAxis dataKey="year" />
                                         <YAxis />
                                         <Tooltip />
-                                        <Legend />
+                                        {/* <Legend /> */}
                                         <Bar dataKey="total" barSize={20} fill="#FFB74D" />
                                         <Line type="monotone" dataKey="total" stroke="#4CAF50" />
                                     </ComposedChart>

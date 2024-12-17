@@ -100,30 +100,43 @@ const incomeController = {
     },
     getIncomeByWeek: async (req, res) => {
         try {
-            const { userId } = req; // Retrieve userId from query parameters
+            const { month, year } = req.query; // Lấy month và year từ query parameters
+            const userId = req.userId;
     
             if (!userId) {
                 return res.status(400).json({ success: false, message: 'userId is required' });
             }
     
+            if (!year || !month) {
+                return res.status(400).json({ success: false, message: 'month and year are required' });
+            }
+    
             // Aggregation pipeline
             const pipeline = [
-                // Match documents by userId
+                // Match documents dựa trên userId, year và month
                 {
-                    $match: { userId }
+                    $match: {
+                        userId,
+                        $expr: {
+                            $and: [
+                                { $eq: [{ $year: { $dateFromString: { dateString: "$date", format: "%Y-%m-%d" } } }, parseInt(year)] },
+                                { $eq: [{ $month: { $dateFromString: { dateString: "$date", format: "%Y-%m-%d" } } }, parseInt(month)] }
+                            ]
+                        }
+                    }
                 },
-                // Add a `dateObj` field to convert string to Date
+                // Chuyển đổi ngày từ string sang Date object
                 {
                     $addFields: {
                         dateObj: {
                             $dateFromString: {
                                 dateString: "$date",
-                                format: "%Y-%m-%d" // Adjust format to match your date strings
+                                format: "%Y-%m-%d"
                             }
                         }
                     }
                 },
-                // Group by year, month, and week within the month
+                // Nhóm dữ liệu theo năm, tháng và tuần trong tháng
                 {
                     $group: {
                         _id: {
@@ -132,16 +145,16 @@ const incomeController = {
                             weekInMonth: {
                                 $ceil: {
                                     $divide: [
-                                        { $dayOfMonth: "$dateObj" }, // Day of the month
-                                        7 // Week size
+                                        { $dayOfMonth: "$dateObj" }, // Ngày trong tháng
+                                        7 // Chia cho 7 để xác định tuần trong tháng
                                     ]
                                 }
                             }
                         },
-                        totalValue: { $sum: "$value" }
+                        totalValue: { $sum: "$value" } // Tính tổng giá trị
                     }
                 },
-                // Sort by year, month, and week within the month
+                // Sắp xếp theo year, month và tuần trong tháng
                 {
                     $sort: {
                         "_id.year": 1,
@@ -151,11 +164,19 @@ const incomeController = {
                 }
             ];
     
-            // Execute aggregation
+            // Thực thi aggregation
             const result = await Income.aggregate(pipeline);
     
-            // Respond with the result
-            res.status(200).json({ success: true, data: result });
+            // Định dạng lại kết quả trả về
+            const formattedResult = result.map(item => ({
+                year: item._id.year,
+                month: item._id.month,
+                name: `Tuần ${item._id.weekInMonth}`,
+                total: item.totalValue
+            }));
+    
+            // Phản hồi kết quả
+            res.status(200).json({ success: true, data: formattedResult });
         } catch (error) {
             console.error(error);
             res.status(500).json({ success: false, message: 'Server Error', error });
@@ -163,69 +184,88 @@ const incomeController = {
     },
     getIncomeByDate: async (req, res) => {
         try {
-            const { month, year } = req.query; // Retrieve month, and year from query parameters
+            const { year } = req.query; // Lấy month và year từ query parameters
             const userId = req.userId;
-
+    
             if (!userId) {
                 return res.status(400).json({ success: false, message: 'userId is required' });
             }
     
-            // Match conditions based on query parameters
+            // Xác định các năm gần đây
+            const currentYear = new Date().getFullYear();
+            const recentYears = [currentYear, currentYear - 1, currentYear - 2]; // 3 năm gần đây
+    
+            // Match conditions
             const matchConditions = { userId };
     
-            if (month) {
-                matchConditions['$expr'] = {
-                    ...(matchConditions['$expr'] || {}),
-                    $eq: [{ $month: { $dateFromString: { dateString: "$date", format: "%Y-%m-%d" } } }, parseInt(month)]
-                };
-            }
-    
+            // Lọc theo năm nếu có, nếu không thì lấy 3 năm gần đây
             if (year) {
                 matchConditions['$expr'] = {
                     ...(matchConditions['$expr'] || {}),
                     $eq: [{ $year: { $dateFromString: { dateString: "$date", format: "%Y-%m-%d" } } }, parseInt(year)]
                 };
+            } else {
+                // Nếu không có year, lấy dữ liệu trong 3 năm gần đây
+                matchConditions['$expr'] = {
+                    ...(matchConditions['$expr'] || {}),
+                    $in: [{ $year: { $dateFromString: { dateString: "$date", format: "%Y-%m-%d" } } }, recentYears]
+                };
             }
     
             // Aggregation pipeline
             const pipeline = [
-                // Match documents by userId and optionally by month/year
+                // Match documents dựa trên userId và điều kiện lọc
                 { $match: matchConditions },
-                // Add a `dateObj` field to convert string to Date
+                // Thêm trường dateObj để chuyển đổi từ string thành Date
                 {
                     $addFields: {
                         dateObj: {
                             $dateFromString: {
                                 dateString: "$date",
-                                format: "%Y-%m-%d" // Adjust format to match your date strings
+                                format: "%Y-%m-%d"
                             }
                         }
                     }
                 },
-                // Group by year and month
+                // Nhóm dữ liệu: nếu có 'year', nhóm theo từng tháng, nếu không nhóm theo năm
                 {
                     $group: {
-                        _id: {
-                            year: { $year: "$dateObj" },
-                            month: { $month: "$dateObj" }
-                        },
-                        totalValue: { $sum: "$value" }
+                        _id: year
+                            ? { month: { $month: "$dateObj" } } // Nhóm theo tháng nếu có 'year'
+                            : { year: { $year: "$dateObj" } }, // Nhóm theo năm nếu không có 'year'
+                        totalValue: { $sum: "$value" } // Tính tổng giá trị
                     }
                 },
-                // Sort by year and month
+                // Sắp xếp: theo năm hoặc tháng
                 {
-                    $sort: {
-                        "_id.year": 1,
-                        "_id.month": 1
-                    }
+                    $sort: year
+                        ? { "_id.month": 1 } // Sắp xếp theo tháng nếu có 'year'
+                        : { "_id.year": 1 } // Sắp xếp theo năm nếu không có 'year'
                 }
             ];
     
-            // Execute aggregation
+            // Thực thi aggregation
             const result = await Income.aggregate(pipeline);
     
-            // Respond with the result
-            res.status(200).json({ success: true, data: result });
+            // Định dạng lại kết quả
+            let formattedResult;
+    
+            if (year) {
+                // Nếu có year → danh sách các tháng
+                formattedResult = result.map(item => ({
+                    month: `T${item._id.month}`,
+                    total: item.totalValue
+                }));
+            } else {
+                // Nếu không có year → danh sách các năm
+                formattedResult = result.map(item => ({
+                    year: `Năm ${item._id.year}`,
+                    total: item.totalValue
+                }));
+            }
+    
+            // Trả về kết quả
+            res.status(200).json({ success: true, data: formattedResult });
         } catch (error) {
             console.error(error);
             res.status(500).json({ success: false, message: 'Server error', error });

@@ -8,6 +8,12 @@ export const expenseApi = {
     getByType: () => {
         return axiosClient.get(`${EXPENSES_API_PATH}/get-by-type`);
     },
+    getByWeek: (data) => {
+        return axiosClient.get(`${EXPENSES_API_PATH}/get-by-week`, {params: data});
+    },
+    getByDate: (data) => {
+        return axiosClient.get(`${EXPENSES_API_PATH}/get-by-date`, {params: data});
+    },
     createExpense: (data) => {
         return axiosClient.post(`${EXPENSES_API_PATH}/create`, data);
     },
