@@ -47,6 +47,7 @@ app.use(bodyParser.json());
 const goalRoute = require('./app/routers/goal');
 const incomeRoute = require('./app/routers/income');
 const expenseRoute = require('./app/routers/expense');
+const balanceRoute = require('./app/routers/balance');
 const authRoute = require('./app/routers/auth');
 const userRoute = require('./app/routers/user'); 
 const otpRoute = require('./app/routers/otp'); 
@@ -54,6 +55,7 @@ const otpRoute = require('./app/routers/otp');
 
 
 
+app.use('/balance', balanceRoute);
 app.use('/expenses', expenseRoute);
 app.use('/incomes', incomeRoute);
 app.use('/goals', goalRoute);
