@@ -51,6 +51,7 @@ const balanceRoute = require('./app/routers/balance');
 const authRoute = require('./app/routers/auth');
 const userRoute = require('./app/routers/user'); 
 const otpRoute = require('./app/routers/otp'); 
+const exportRoute = require('./app/routers/export'); 
 
 
 
@@ -61,6 +62,7 @@ app.use('/incomes', incomeRoute);
 app.use('/goals', goalRoute);
 app.use('/auth', authRoute);
 app.use('/users', userRoute);
+app.use('/export', exportRoute);
 app.use('/otp', otpRoute);
 
 
