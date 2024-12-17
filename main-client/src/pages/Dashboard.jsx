@@ -21,10 +21,11 @@ import {
     Spin,
     Typography,
 } from 'antd';
-import { DollarTwoTone, HeartTwoTone, SmileTwoTone, HomeTwoTone, SafetyCertificateTwoTone, AppstoreTwoTone } from '@ant-design/icons';
+import { DollarTwoTone, HeartTwoTone, SmileTwoTone, HomeTwoTone, SafetyCertificateTwoTone, AppstoreTwoTone, WalletTwoTone } from '@ant-design/icons';
 import Loading from '../components/loading';
 import { toast } from 'react-toastify';
 import { expenseApi } from '../api/expenseApi';
+import { balanceApi } from '../api/balanceApi';
 
 const { Title } = Typography;
 
@@ -34,17 +35,18 @@ const ExpenseDashboard = () => {
     //     const testLoading = setTimeout(() => {setIsLoading(false)}, 1000)
     //     return () => clearTimeout(testLoading)
     // }, [])
-    const balance = 12000000; // Current balance
+    
+    const [balanceInfo, setBalanceInfo] = useState({});
+    const [expenseCategories, setExpenseCategories] = useState([]);
+    const [weeklyExpenses, setWeeklyExpenses] = useState([]);
+    const [monthlyExpenses, setMonthlyExpenses] = useState([]);
+    const [yearlyExpenses, setYearlyExpenses] = useState([]);
+    
     const currencyFormatter = (value) =>
         new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND',
         }).format(value);
-
-    const [expenseCategories, setExpenseCategories] = useState([]);
-    const [weeklyExpenses, setWeeklyExpenses] = useState([]);
-    const [monthlyExpenses, setMonthlyExpenses] = useState([]);
-    const [yearlyExpenses, setYearlyExpenses] = useState([]);
 
     const formatPieChartData = (data) => {
         const newData = data.map((item) => {
@@ -110,9 +112,11 @@ const ExpenseDashboard = () => {
             const dataByWeek = await expenseApi.getByWeek({month: 12, year: 2024});
             const dataByMonth = await expenseApi.getByDate({year: 2024});
             const dataByYear = await expenseApi.getByDate();
+            const balance = await balanceApi.getBalance();
             setWeeklyExpenses(dataByWeek.data.data)
             setMonthlyExpenses(dataByMonth.data.data)
             setYearlyExpenses(dataByYear.data.data)
+            setBalanceInfo(balance.data)
             const formattedData = formatPieChartData(statistics.data.data);
             setExpenseCategories(formattedData)
             setIsLoading(false)
@@ -138,12 +142,42 @@ const ExpenseDashboard = () => {
                                 <div className="statistic-card">
                                     <div>
                                         <div className="number_total">
-                                            {currencyFormatter(balance)}
+                                            {currencyFormatter(balanceInfo.balance)}
                                         </div>
                                         <div className="title_total" style={{color:'#1677ff'}}>Số dư hiện tại</div>
                                     </div>
                                     <div style={{ alignSelf: 'center' }}>
                                         <DollarTwoTone style={{ fontSize: 48 }} />
+                                    </div>
+                                </div>
+                            </Card>
+                        </Col>
+                        <Col span={8}>
+                            <Card bordered={false}>
+                                <div className="statistic-card">
+                                    <div>
+                                        <div className="number_total">
+                                            {currencyFormatter(balanceInfo.totalIncome)}
+                                        </div>
+                                        <div className="title_total" style={{color:'#4CAF50'}}>Tổng thu nhập</div>
+                                    </div>
+                                    <div style={{ alignSelf: 'center' }}>
+                                    <WalletTwoTone twoToneColor="#4CAF50" style={{ fontSize: 48 }} />
+                                    </div>
+                                </div>
+                            </Card>
+                        </Col>
+                        <Col span={8}>
+                            <Card bordered={false}>
+                                <div className="statistic-card">
+                                    <div>
+                                        <div className="number_total">
+                                            {currencyFormatter(balanceInfo.totalExpense)}
+                                        </div>
+                                        <div className="title_total" style={{color:'#FF6F61'}}>Tổng chi tiêu</div>
+                                    </div>
+                                    <div style={{ alignSelf: 'center' }}>
+                                    <WalletTwoTone twoToneColor="#FF6F61" style={{ fontSize: 48 }} />
                                     </div>
                                 </div>
                             </Card>
