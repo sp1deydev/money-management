@@ -15,11 +15,13 @@ import {
   Modal,
   Typography,
 } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { goalApi } from '../api/goalApi';
 import Loading from '../components/loading';
+import { exportApi } from '../api/exportApi';
+import FileSaver from 'file-saver';
 
 const pageSize = 7
 const { Title } = Typography;
@@ -201,9 +203,24 @@ const Goal = () => {
   return (
     (isLoading ? <Loading secondLoading={true}/>:
     <Layout style={{ height: '100vh', backgroundColor: '#E8F5E9' }}>
-      <Title level={4} style={{ color: '#444' }}>
-        Mục tiêu tài chính
-      </Title>
+      <div style={{display: 'flex', justifyContent:'space-between'}}>
+        <Title level={4} style={{ color: '#444' }}>
+          Mục tiêu tài chính
+        </Title>
+        <Button
+            // type="primary"
+            icon={<DownloadOutlined />}
+            onClick={async () => {
+                const data = await exportApi.downloadGoal();
+                // If you want to download file automatically using link attribute.
+                const blob = new Blob([data.data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',});
+                FileSaver.saveAs(blob, 'goal.xlsx')
+            }}
+            style={{ marginTop: 20, marginBottom: 20, float: 'right' }}
+          >
+            Excel
+          </Button>
+      </div>
       <Content>
         <Row gutter={16}>
           <Col span={8}>

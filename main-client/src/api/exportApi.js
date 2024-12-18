@@ -9,4 +9,7 @@ export const exportApi = {
     downloadExpense: () => {
         return fileClient.post(`${EXPORT_API_PATH}/expense`);
     },
+    downloadGoal: () => {
+        return fileClient.post(`${EXPORT_API_PATH}/goal`);
+    },
 }
